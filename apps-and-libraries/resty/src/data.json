@@ -1,0 +1,13 @@
+{
+  "categories": [
+    {
+      "name": "Foobar",
+      "id": 1
+    },
+    {
+      "name": "Electronics",
+      "id": 2
+    }
+  ],
+  "products": []
+}

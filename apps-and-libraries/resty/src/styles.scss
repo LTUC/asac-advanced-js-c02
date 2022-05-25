@@ -1,0 +1,234 @@
+@import url("https://fonts.googleapis.com/css2?family=Titillium+Web:wght@200;300;400;600;700;900&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  font-family: 'Titillium Web', sans-serif;
+  background: #e0e0e0;
+
+  #root {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  h2 {
+    margin: 0 2rem;
+  }
+
+  header {
+    background: #111;
+
+    display:flex;
+    flex-direction:column;
+
+    h1 {
+      color: #eee;
+      display: inline-block;
+      font-weight: 700;
+      margin: .5em auto;
+    text-align: center;
+    }
+
+    nav {
+      background: rgb(85, 2, 2);
+
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+
+        li {
+          display: inline-block;
+          padding: .5rem 2rem;
+          position: relative;
+
+          a {
+            color: #eee;
+            text-decoration: none;
+
+            &:after {
+              bottom: 0;
+              content: '';
+              left: 0;
+              position: absolute;
+              right: 0;
+              top: 0;
+            }
+
+            &.here, &.here:hover {
+              color: red;
+            }
+          }
+
+          &:hover {
+            background: #111;
+
+            a {
+              color: #f5f5f5;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .react-json-view {
+    margin: 1rem 2rem;
+  }
+
+  .loading {
+    img {
+      margin: auto;
+      top: 50%;
+      transform: translateY(50%);
+      width: 200px;
+      display: block;
+      height: 100px;
+    }
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+
+    div {
+      display: flex;
+      flex-direction: row;
+      margin: 1rem;
+    }
+
+    input[type=text] {
+      background: #f5f5f5;
+      border: none;
+      border-bottom: 1px solid #000;
+      font-size: 1.1rem;
+      margin: 0;
+      outline: none;
+      padding: .25rem;
+      transition: all 400ms ease-out;
+      width: 80%;
+
+      &:focus {
+        background: #fff;
+        border-bottom: 2px solid blue;
+      }
+    }
+
+    .methods {
+      display: flex;
+
+      .method {
+        background: #f5f5f5;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-right: .5rem;
+        padding: 0 1rem;
+        line-height: 2rem;
+        height: 2rem;
+
+        &:hover, &.true {
+          background: #ccc;
+        }
+      }
+
+      textarea {
+        flex: 1;
+        height: 3rem;
+      }
+    }
+
+    button {
+      margin-left: 3rem;
+    }
+  }
+
+  main {
+    display: flex;
+    flex: 1;
+    margin: 0 1rem;
+
+    .history {
+      margin: 1rem;
+      height: calc(100vh - 15rem);
+      overflow: auto;
+
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 2rem;
+
+        li {
+          padding: .5rem 0;
+
+          .method {
+            border-radius: 5px;
+            color: #fff;
+            display: inline-block;
+            font-weight: bold;
+            padding: .25rem 1rem;
+
+            &.get {
+              background: blue;
+            }
+
+            &.delete {
+              background: red;
+            }
+
+            &.put {
+              background: goldenrod;
+            }
+
+            &.post {
+              background: green;
+            }
+          }
+
+          .url {
+            background: inherit;
+            border: none;
+            cursor: pointer;
+            padding: .5rem 1rem;
+          }
+        }
+      }
+
+    .results {
+      background: #f5f5f5;
+      border: 1px solid #111;
+      flex: 1;
+      height: calc(100vh - 18rem);
+      margin: 1rem;
+      overflow: auto;
+      padding: 2rem;
+    }
+    }
+
+    section.historyPage {
+      display:flex;
+
+        aside {
+        div {
+          cursor:pointer;
+          padding: 1rem;
+          white-space: nowrap;
+          &:hover {
+            background: #efefef;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "name": "api-client",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "main": "src/index.js",
+  "dependencies": {
+    "@material-ui/core": "4.9.14",
+    "@material-ui/icons": "4.9.1",
+    "jwt-decode": "^3.1.2",
+    "material-ui": "0.20.2",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-if": "3.4.3",
+    "react-router-dom": "5.2.0",
+    "react-scripts": "^3.4.3",
+    "sass": "^1.49.9",
+    "socket.io-client": "^2.3.0",
+    "superagent": "5.2.2"
+  },
+  "devDependencies": {
+    "typescript": "3.9.3"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build && echo '/* /index.html 200' | cat >build/_redirects ",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}
