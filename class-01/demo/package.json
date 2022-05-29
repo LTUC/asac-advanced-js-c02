@@ -1,0 +1,26 @@
+{
+  "name": "cicddemo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --coverage --verbose"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mreshtaiwi/cicddemo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mreshtaiwi/cicddemo/issues"
+  },
+  "homepage": "https://github.com/mreshtaiwi/cicddemo#readme",
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "jest": "^28.1.0",
+    "supertest": "^6.2.3"
+  }
+}
