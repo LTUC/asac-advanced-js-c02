@@ -1,19 +1,34 @@
-'use strict';
-// table schema
-const People = (sequelize, DataTypes) => {
-    sequelize.define("People", {
+//this is gonna be very simple example
+"use strict";
+
+// Our table schema
+const People = (sequelize, DataTypes) =>
+    sequelize.define("people", {
         firstName: {
-            // dataTypes
-            // https://sequelize.org/v5/manual/data-types.html
             type: DataTypes.STRING,
-            // constraints
-            // https://sequelize.org/v6/manual/validations-and-constraints.html
             allowNull: false,
         },
+
         lastName: {
             type: DataTypes.STRING,
-        }
-    })
-}
+        },
+    });
 
 module.exports = People;
+
+
+// the error is here => {
+// no need to the {}
+// }
+// const People = (sequelize, DataTypes) => {
+//     sequelize.define("People", {
+//         firstName: {
+//             type: DataTypes.STRING,
+//             allowNull: false,
+//         },
+//         lastName: {
+//             type: DataTypes.STRING,
+//         },
+//     });
+// };
+// module.exports = People;
