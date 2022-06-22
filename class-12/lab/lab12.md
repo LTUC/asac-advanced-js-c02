@@ -1,4 +1,4 @@
-# LAB-23: Socket.io
+# LAB-12: Socket.io
 
 **Airline System** Part2: today you will continue working on the Airline-system, you will refactor your code to use _socket.io_ instead of Node Events to handle your connections between multiple system components, which in turn facilitate real-time communication and allow bi-directional communication between client and server.
 
