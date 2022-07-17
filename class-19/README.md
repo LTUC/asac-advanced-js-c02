@@ -1,9 +1,6 @@
-# AWS: Events
+# AWS: API, Dynamo and Lambda
 
-AWS provides 2 different means of providing inter-application messaging
-
-- SNS - Simple Notification Service
-- SQS - Simple Queue Service
+Mirroring our previous efforts in Express, today, we will be wiring up a completely serverless, let fully functional, CRUD-Enabled API.
 
 ## Learning Objectives
 
@@ -11,15 +8,16 @@ AWS provides 2 different means of providing inter-application messaging
 
 #### Describe and Define
 
-- The differences between SNS and SQS
-- Use cases for each
-- FIFO Queues
-- The publisher/subscriber relationship
+- AWS API Gateway
+- How to trigger Lambda Functions in response to an API request
+- The differences between HTTP and REST APIs at AWS
+- The differences between DynamoDB and Mongo
 
 #### Execute
 
-- Create a notification topic that triggers an action
-- Create a Queue that retains messages
+- Creation of a DynamoDB Table
+- Creation of a Lambda function that can operate on a DynamoDB Table
+- Usage of Dynamoose in a NodeJS Lambda Function
 
 ## Today's Outline
 
@@ -27,111 +25,74 @@ AWS provides 2 different means of providing inter-application messaging
 
 ## Notes
 
-### SNS - Working with Notifications in Code
+Creating a serverless API: Checklist
 
-#### Publishing (Pushing) a message with SNS
+- [ ] IAM User role with access to Lambda and DynamoDB Full Access
+- [ ] Dynamo DB Table Created
+- [ ] Lambda function(s) that use Dynamoose to attach to the table
+  - [ ] Created with the correct IAM Role (Step 1)
+- [ ] API Endpoints that all the appropriate functions for each action type
 
-This sample application contacts SNS and publishes a single message
+### Creating a Dynamo DB Table at AWS
 
-```javascript
-const AWS = require('aws-sdk');
-AWS.config.update({region:'us-west-2'});
+1. Open the DynamoDB Dashboard
+1. Choose `Create Table`
+1. Name your table
+1. Choose a field name to use as primary key
+   - Generally, "id", and you'll need to supply this when you add records
 
-const sns = new AWS.SNS();
+### Working with Dynamo from Node
 
-const topic = 'arn:aws:sns:us-west-2:335083857671:alert';
+When writing code that connects to a Dynamo Database, you'll need to know your AWS credentials and install `dynamoose` as a dependency
 
-const payload = {
-  Message: 'Hello from John',
-  TopicArn: topic,
-};
+<https://dynamoosejs.com/getting_started/Introduction>
 
-sns.publish(payload).promise()
-  .then(data => {
-    console.log(data);
-  })
-  .catch(console.error);
-;
-```
+#### Create a Schema with Dynamoose
 
-#### Subscribe to a topic
-
-A node application such as below will continually run, waiting on notifications to be pushed to it, and will respond as they occur
-
-```javascript
-const AWS = require('aws-sdk');
-AWS.config.update({region: 'us-west-2'});
-const sns = new AWS.SNS();
-
-const topic = 'arn:aws:sns:us-west-2:335083857671:TaskComplete';
-
-var params = {
-  Protocol: 'sms',
-  TopicArn: topic,
-  Endpoint: '+12065551212',
-  ReturnSubscriptionArn: true || false,
-};
-
-sns.subscribe(params).promise()
-  .then( data => console.log('OK', data) )
-  .catch( console.error );
-```
-
-### SQS - Queues
-
-#### Publishing with Node.js
-
-```javascript
-const uuid = require('uuid').v4;
-const { Producer } = require('sqs-producer');
-
-const producer = Producer.create({
-  queueUrl: `https://sqs.us-west-2.amazonaws.com/335083857671/john-testing-queue`,
-  region: `us-west-2`,
-});
-
-let counter = 0;
-
-setInterval(async () => {
-
-  try {
-    const message = {
-      id: uuid(),
-      body: `This is message #${counter++}`,
-    };
-
-    const response = await producer.send(message);
-    console.log(response);
-  } catch (e) {
-    console.error(e);
-  }
-}, Math.floor(Math.random() * 1000));
-```
-
-#### Subscribing with Node.js
+This is just like Mongoose!
 
 ```javascript
 'use strict';
 
-const { Consumer } = require('sqs-consumer');
+const dynamoose = require('dynamoose');
 
-const app = Consumer.create({
-  queueUrl: 'https://sqs.us-west-2.amazonaws.com/335083857671/sqs-testing',
-  handleMessage: handler,
+const friendsSchema = new dynamoose.Schema({
+  'id': String,
+  'name': String,
+  'phone': String,
 });
 
-function handler(message) {
-  console.log(message.Body);
+module.exports = dynamoose.model('friends', friendsSchema);
+```
+
+#### Write your Lambda Function (or any JS) to use your schema...
+
+> Be sure your Lambda function has full permissions for API Gateway, DynamoDB, and Cloudwatch
+
+The actul schema and CRUD ops are very similar Mongoose and Mongo
+
+```javascript
+const contentModel = require('./friends.schema.js');
+
+async function findRecord(id) {
+  const content = await contentModel.query("id").eq(id).exec();
+  console.log(content[0]);
 }
 
-app.on('error', (err) => {
-  console.error(err.message);
-});
-
-app.on('processing_error', (err) => {
-  console.error(err.message);
-});
-
-app.start();
+async function saveRecord(name, phone) {
+  const id = uuid();
+  const record = new contentModel({ id, name, phone });
+  const data = await record.save();
+  console.log(data);
+}
 
 ```
+
+### Create API Endpoints
+
+1. At API Gateway, create a new HTTP API
+1. Identify "Integrations" which is one or more of your Lambda functions (above)
+1. Once created, define a route endpoint for each REST method
+1. Connect each endpoint to the correct lambda
+
+As your routes are invoked by users, those lambda's will fire, with the `event` receiving any POST or QUERY data

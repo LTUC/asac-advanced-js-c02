@@ -142,4 +142,10 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+
 # End of https://www.gitignore.io/api/vim,osx,node,linux,windows

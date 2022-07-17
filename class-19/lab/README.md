@@ -1,62 +1,71 @@
-# Lab: AWS: Events
+# Lab: AWS: API, Dynamo and Lambda
 
 ## Overview
 
-Using only AWS Services: SQS, SNS, Lambda, create a cloud version of the CAPS system
+Create a serverless REST API
 
 ## Feature Tasks & Requirements
 
-Refer to the [CAPS System Overview](../../apps-and-libraries/caps/README.md) for a complete review of the application, including Business and Technical requirements along with the development roadmap.
+Create a single resource REST API using a domain model of your choosing, constructed using AWS Cloud Services
 
-### Required Services
-
-1. SNS Topic: **pickup** which will receive all pickup requests from vendors
-1. SQS Queue (FIFO): **packages** which will contain all delivery requests from vendors, in order of receipt.
-   - Subscribe this queue to the **pickup** topic so all pickups are ordered
-1. SQS Queue (Standard) for each vendor (named for the vendor) which will contain all delivery notifications from the drivers
-
-### Operations
-
-#### Vendors:
-
-- Vendors will post "pickup" messages containing delivery information into the SNS **pickup** topic
-  - `{ orderId: 1234, customer: "Jane Doe", vendorId: queueArn}`
-  - Note the `queueArn` -- this refers to the AWS 'arn' of the vendor's specific delivered queue
-- Pickup requests should be moved into a FIFO queue called **packages** for the drivers automatically
-  - (Make the packages queue a subscriber to the pickup topic)
-- Vendors should separately subscribe to their personal SQS queue and periodically poll the queue to see delivery notifications
-
-#### Drivers:
-
-- Drivers will poll the SQS **packages** queue and retrieve only the next delivery order (message)
-- After a time (e.g. 5 seconds), drivers will post a message to the Vendor specific SQS Queue using the `queueArn` specified in the order object
+- **Database**: DynamoDB
+  - 1 Table required
+- **Routing**: API Gateway
+  - **POST**
+  - `/people` - Given a JSON body, inserts a record into the database
+  -  returns an object representing one record, by its id (##)
+  - **GET**
+    - `/people` - returns an array of objects representing the records in the database
+    - `/people/##` - returns an object representing one record, by its id (##)
+  - **PUT**
+  - `/people/##` - Given a JSON body and an ID (##), updates a record in the database
+  -  returns an object representing one record, by its id (##)
+  - **DELETE**
+  - `/people/##` - Given an id (##) removes the matching record from the database
+  -  returns an empty object
+- **CRUD Operation Handlers**: Lambda Functions
 
 ## Implementation Notes
 
-Work in a non-main branch in a new repository called "caps-cloud"
+Work in a non-main branch in a new repository called 'serverless-api'. While your code will all reside in a single repo, your functions will need to be individually .zipped and deployed using common libraries (node_modules) and schema files.
 
-Once you have the appropriate queues and topics setup at SNS and SQS, you'll need some NodeJS applications running to get the system started
+- Create one table for one data model at Dynamo DB
+- Create a `Dynamoose` schema to define the structure of your table
+- Write lambda functions that will separately perform the proper CRUD operation on the database
+- Create your routes using API Gateway
+  - Routes should integrate with the appropriate Lambda function to perform the operation
 
-1. `vendor.js` should be an SQS Subscriber
-   - Connect it to the pickup topic by using it's URL/ARN
-     - Set it up to produce a new message to the "pickup" topic every few seconds, simulating an order
-       - The order id and customer name can be randomized
-       - Include the ARN to the vendor's personal delivery queue
-   - Connect it to their own vendor queue by using it's URL/ARN
-   - As drivers deliver, this app will continually poll the queue, retrieve them, and log details out to the console
-   - You should be able to disconnect this app, and see deliveries that happened while the app was not running
-1. `driver.js`
-   - Connect to the **pickup** queue and get only the next package
-   - Wait a random number of seconds
-   - Post a message to the Vendor's "delivered" Queue (using the supplied arn in the order/message) to alert them of the delivery
-   - Repeat until the queue is empty
+## Testing
 
-> You should eventually be able to have multiple drivers and vendors wired up and acting in concert
+Once you can assert the type of data coming back from Dynamoose and the type of input you'll get from the API in the `event`, write the test cases for each Lambda function
+
+## Deployment
+
+As a baseline, deployment should be done manually, with .zip files containing the required files, uploaded to each function.  As a stretch goal, you should endeavor to have your functions automatically deployed on all checkins to your `main` branch
+
+## Stretch Goal
+
+As it stands, your API routes and Lambda functions are tightly coupled. Can you architect a system where the API routes send in the data model as a parameter, and the lambda functions dynamically use the correct schema to handle the request?
+
+For example,
+
+GET `/{model}/{id}` should invoke a lambda function that knows how to switch the Dynamo table name to match the **model** parameter as well as to use the correct schema for that model name.
+
+This could create a very dynamic system, that could handle any data model...
+
+
+## Documentation
+
+Provide a UML diagram showcasing the architecture of your API
+
+Document the data and program flow for your API, including the mapping of Routes and Functions, as well as the flow of data.
+
+- What is the root URL to your API?
+- What are the routes?
+- What inputs do they require?
+- What output do they return?
 
 ## Submission Instructions
 
-Provide a UML diagram showcasing the architecture of your delivery system
-Provide an image showing the console responding the events above
-Document the data and program flow for a package
-
 Submit a well written README.md in your repository following the above general guidelines
+
