@@ -1,5 +1,7 @@
 # Git & GitHub Team Workflow
 
+be careful if you want to create staging branch to do it at the beginning and push the project structure to it and at the end of the project week you can do merge to main from staging
+
 ## When you start a new feature...
 
 - Start from an up-to-date _main_ branch
